@@ -12,9 +12,12 @@ public class LogIn {
         final String ID = in.nextLine();
         System.out.print("write your Password: ");
         final String PASSWORD = in.nextLine();
-        final boolean response = ValidUser.isIdValid(ID).and(ValidUser.isPasswordValid(PASSWORD)).test(userList);
-        if(response) return response;
-        else throw new NoSuchUserException("Invalid User Or Password");
+        final boolean response = ValidUser.isIdValid(ID)
+                .and(ValidUser.isPasswordValid(PASSWORD))
+                .and(ValidUser.isListEmpty())
+                .test(userList);
+        if(!response) throw new NoSuchUserException("Invalid User Or Password");
+        return response;
     }
 
     private interface ValidUser extends Predicate<List<User>> {
@@ -28,6 +31,10 @@ public class LogIn {
             return users -> users.stream()
                     .map(User::getPassword)
                     .anyMatch(password -> password.equals(PasswordToSearch));
+        }
+
+        static ValidUser isListEmpty(){
+            return List::isEmpty;
         }
 
         default ValidUser and(ValidUser anotherValidator){
