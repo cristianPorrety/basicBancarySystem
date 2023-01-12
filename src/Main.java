@@ -1,8 +1,8 @@
-import java.util.List;
-
+import bankAccount.deposit.Deposit;
+import bankAccount.loan.LoanAccount;
 public class Main {
     public static void main(String[] args) {
-        List<Integer> a = List.of(1, 2, 3, 4);
-        System.out.println(a.stream().filter(n -> n == 5).toList());
+        Deposit loan = new Deposit();
+        loan.signUp();
     }
 }
