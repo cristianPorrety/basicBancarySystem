@@ -1,25 +1,20 @@
 package bankAccount.loan;
 
+import assestment.Validations;
 import bankAccount.BankAccount;
+import home.Home;
 import loggin.GeneralSignUp;
 import loggin.LogIn;
 import loggin.NoSuchUserException;
 import security.Encryption;
 import user.User;
 import javax.swing.JOptionPane;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 
-public class LoanAccount implements BankAccount {
-    private static final Map<String, User> USERS = new HashMap<>();
-    private static final Map<String, String> passwordTable = new HashMap<>();
-    public static Map<String, User> getUsers(){
-        return USERS;
-    }
+public class LoanAccount extends BankAccount {
 
     @Override
-    public void signUp() {
+    public void signUp() throws NoSuchUserException {
         User preSign = GeneralSignUp.addingUser();
         if(!(
                 UserIsAvaliableToLoan
@@ -31,7 +26,7 @@ public class LoanAccount implements BankAccount {
         ){
             System.out.println("loan not avaliable");
         }else{
-            preSign.setCash(Long.parseLong(JOptionPane.showInputDialog("how much money do you want?")));
+            preSign.setCash(secureLoan(Long.parseLong(JOptionPane.showInputDialog("how much money do you want?"))));
             final String password = JOptionPane.showInputDialog("type your password");
             passwordTable.put(password, Encryption.getSaltvalue(30));
             USERS.put(passwordTable.get(password), preSign);
@@ -40,7 +35,7 @@ public class LoanAccount implements BankAccount {
     }
 
     @Override
-    public void intoAcount(User user) {
+    protected void intoAcount(User user) throws NoSuchUserException {
         Scanner in = new Scanner(System.in);
         long moneyToPay = user.getCash() + (user.getCash() * 10 / 100);
         String action;
@@ -51,15 +46,25 @@ public class LoanAccount implements BankAccount {
             action = in.nextLine();
             if(action.equalsIgnoreCase("p")){
                 System.out.print("how much money do you want to pay");
-                moneyToPay -= in.nextLong();
+                moneyToPay = Validations.secureReduction(moneyToPay, in.nextLong());
             }else if(!(action.equalsIgnoreCase("s"))){
                 System.out.println("action unavaliable");
             }
         }while(!(action.equalsIgnoreCase("s")));
+        Home.homeQuotes();
     }
 
     @Override
     public void login() throws NoSuchUserException {
         intoAcount(LogIn.login(USERS, passwordTable));
+    }
+
+    private Long secureLoan(Long toLoan){
+        Scanner in = new Scanner(System.in);
+        while (toLoan < 1){
+            System.out.println("demasiado bajo para prestamo, algo mas alto: ");
+            toLoan = in.nextLong();
+        }
+        return toLoan;
     }
 }

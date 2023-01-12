@@ -9,7 +9,7 @@ public class GeneralSignUp {
     public static User addingUser(){
         String DNI;
         do{
-            System.out.print("type your DNI");
+            System.out.print("type your DNI: ");
             DNI = in.nextLine();
         }while(!(isValidDNI().test(DNI)));
         return new User(DNI);

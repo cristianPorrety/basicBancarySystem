@@ -12,14 +12,14 @@ public class LogIn {
         final String ID = in.nextLine();
         System.out.print("write your Password: ");
         final String PASSWORD = in.nextLine();
-        if(passwordTable.containsKey(PASSWORD)
+        if(!(passwordTable.containsKey(PASSWORD)
                 && ValidUserToLogIn.isIdValid(ID)
                 .test(userTable
                         .values()
                         .stream()
-                        .toList())
-                && !userTable.isEmpty()) throw new NoSuchUserException("Invalid User Or Password");
-        return LoanAccount.getUsers().get(passwordTable.get(PASSWORD));
+                        .toList()))
+                && userTable.isEmpty()) throw new NoSuchUserException("Invalid User Or Password");
+        return userTable.get(passwordTable.get(PASSWORD));
     }
 
     private interface ValidUserToLogIn extends Predicate<List<User>> {
