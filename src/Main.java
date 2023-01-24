@@ -5,6 +5,7 @@ import loggin.NoSuchUserException;
 
 public class Main {
     public static void main(String[] args) throws NoSuchUserException {
-        Home.homeQuotes();
+        System.out.println("hola");
+	Home.homeQuotes();
     }
 }
